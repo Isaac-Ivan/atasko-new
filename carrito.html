@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - Atasko</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="body-carrito">
+    
+    <header class="encabezado">
+        <div class="contenedor contenido-header">
+            <div class="logo">
+                <h1>Atasko<span class="punto">.</span></h1>
+            </div>
+            <nav class="navegacion">
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="productos.html">Productos</a></li>
+                    <li><a href="acerca.html">Acerca de</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+            <div class="iconos-nav">
+                <a href="login.html" class="btn-icono"><i class="fa-solid fa-user"></i></a>
+                <a href="carrito.html" class="btn-icono activo"><i class="fa-solid fa-cart-shopping"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero hero-interno">
+        <div class="hero-overlay"></div>
+        <div class="contenedor contenido-hero">
+            <h2>Tu Carrito</h2>
+            <p>Estás a un paso de consentir a tu mascota.</p>
+        </div>
+    </section>
+
+    <section class="seccion carrito-seccion">
+        <div class="contenedor carrito-layout">
+            
+            <div class="carrito-items" id="cart-items-container">
+                <!-- Los items del carrito se cargarán aquí -->
+            </div>
+
+            <div class="carrito-resumen">
+                <div class="card-resumen">
+                    <h3>Resumen del Pedido</h3>
+                    
+                    <div class="linea-resumen">
+                        <span>Subtotal</span>
+                        <span id="subtotal-amount">$0.00 MXN</span>
+                    </div>
+                    <div class="linea-resumen">
+                        <span>Envío</span>
+                        <span class="gratis">Gratis</span>
+                    </div>
+                    <div class="linea-resumen total">
+                        <span>Total</span>
+                        <span id="total-amount">$0.00 MXN</span>
+                    </div>
+
+                    <div class="cupon-box">
+                        <input type="text" placeholder="Código de cupón">
+                        <button>Aplicar</button>
+                    </div>
+
+                    <button class="btn-pagar">Proceder al Pago</button>
+                    
+                    <div class="metodos-pago">
+                        <i class="fa-brands fa-cc-visa"></i>
+                        <i class="fa-brands fa-cc-mastercard"></i>
+                        <i class="fa-brands fa-cc-paypal"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="pie-pagina">
+        <!-- ... Contenido del footer ... -->
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartContainer = document.getElementById('cart-items-container');
+        const subtotalAmountEl = document.getElementById('subtotal-amount');
+        const totalAmountEl = document.getElementById('total-amount');
+        let currentItems = []; // Almacenar los items actuales
+
+        function renderCart(items) {
+            currentItems = items; // Guardar los items para operaciones de cantidad
+            cartContainer.innerHTML = '';
+            let subtotal = 0;
+
+            if (items.length === 0) {
+                cartContainer.innerHTML = `
+                    <div class="carrito-vacio">
+                        <p>Tu carrito está vacío.</p>
+                        <a href="productos.html" class="btn-explorar">Explorar Productos</a>
+                    </div>`;
+                updateTotals(0);
+                return;
+            }
+
+            items.forEach(item => {
+                const itemTotal = item.cantidad * item.precio_unitario;
+                subtotal += itemTotal;
+                const imageUrl = item.imagen ? `data:image/jpeg;base64,${item.imagen}` : `https://placehold.co/100x100/e8f5e9/2e7d32?text=${encodeURIComponent(item.nombre)}`;
+
+                const itemRow = document.createElement('div');
+                itemRow.className = 'item-fila';
+                itemRow.innerHTML = `
+                    <div class="img-col"><img src="${imageUrl}" alt="${item.nombre}"></div>
+                    <div class="info-col"><h4>${item.nombre}</h4></div>
+                    <div class="cantidad-col">
+                        <div class="selector-cantidad">
+                            <button data-id="${item.idproducto}" class="btn-cantidad-menos">-</button>
+                            <input type="text" value="${item.cantidad}" readonly>
+                            <button data-id="${item.idproducto}" class="btn-cantidad-mas">+</button>
+                        </div>
+                    </div>
+                    <div class="precio-col"><p>$${parseFloat(itemTotal).toFixed(2)}</p></div>
+                    <div class="borrar-col"><button class="btn-borrar" data-id="${item.idproducto}"><i class="fa-solid fa-trash"></i></button></div>
+                `;
+                cartContainer.appendChild(itemRow);
+            });
+            
+            cartContainer.innerHTML += `<a href="productos.html" class="seguir-comprando"><i class="fa-solid fa-arrow-left"></i> Seguir Comprando</a>`;
+            updateTotals(subtotal);
+        }
+
+        function updateTotals(subtotal) {
+            const total = subtotal;
+            subtotalAmountEl.textContent = `$${parseFloat(subtotal).toFixed(2)} MXN`;
+            totalAmountEl.textContent = `$${parseFloat(total).toFixed(2)} MXN`;
+        }
+
+        function fetchCart() {
+            fetch('api/cart.php?action=get')
+                .then(response => {
+                    if (response.status === 403) { window.location.href = 'login.html'; return; }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.status === 'success') {
+                        renderCart(data.data);
+                    } else if (data) {
+                        cartContainer.innerHTML = `<p>${data.message}</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar el carrito:', error);
+                    cartContainer.innerHTML = '<p>Ocurrió un error al cargar tu carrito.</p>';
+                });
+        }
+
+        // --- MANEJO DE EVENTOS DEL CARRITO (UPDATE Y REMOVE) ---
+        cartContainer.addEventListener('click', function(event) {
+            const target = event.target;
+            const productId = target.dataset.id;
+            if (!productId) return;
+
+            if (target.classList.contains('btn-borrar') || target.closest('.btn-borrar')) {
+                updateCart('remove', productId);
+            } else if (target.classList.contains('btn-cantidad-mas')) {
+                const item = currentItems.find(i => i.idproducto === productId);
+                const newQuantity = parseInt(item.cantidad) + 1;
+                updateCart('update', productId, newQuantity);
+            } else if (target.classList.contains('btn-cantidad-menos')) {
+                const item = currentItems.find(i => i.idproducto === productId);
+                const newQuantity = parseInt(item.cantidad) - 1;
+                updateCart('update', productId, newQuantity); // La API maneja cantidad 0 como 'remove'
+            }
+        });
+
+        function updateCart(action, productId, quantity) {
+            fetch(`api/cart.php?action=${action}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idproducto: productId, cantidad: quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    fetchCart(); // Recargar el carrito para mostrar los cambios
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error al actualizar el carrito:', error));
+        }
+
+        fetchCart();
+    });
+    </script>
+
+</body>
+</html>
