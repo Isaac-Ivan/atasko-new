@@ -135,13 +135,17 @@
             if (target.classList.contains('btn-borrar') || target.closest('.btn-borrar')) {
                 updateCart('remove', productId);
             } else if (target.classList.contains('btn-cantidad-mas')) {
-                const item = currentItems.find(i => i.idproducto === productId);
-                const newQuantity = parseInt(item.cantidad) + 1;
-                updateCart('update', productId, newQuantity);
+                const item = currentItems.find(i => String(i.idproducto) === productId);
+                if (item) {
+                    const newQuantity = parseInt(item.cantidad) + 1;
+                    updateCart('update', productId, newQuantity);
+                }
             } else if (target.classList.contains('btn-cantidad-menos')) {
-                const item = currentItems.find(i => i.idproducto === productId);
-                const newQuantity = parseInt(item.cantidad) - 1;
-                updateCart('update', productId, newQuantity); // La API maneja cantidad 0 como 'remove'
+                const item = currentItems.find(i => String(i.idproducto) === productId);
+                if (item) {
+                    const newQuantity = parseInt(item.cantidad) - 1;
+                    updateCart('update', productId, newQuantity);
+                }
             }
         });
 

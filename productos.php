@@ -44,6 +44,12 @@
                     const productItem = document.createElement('div');
                     productItem.className = 'producto-item';
                     productItem.setAttribute('data-category', category);
+                    
+                    let adminButtons = '';
+                    if (USER_ROLE == 1) { // 1 es el rol de Admin
+                        adminButtons = `<button class="btn-delete" data-id="${product.idproducto}">Eliminar</button>`;
+                    }
+
                     productItem.innerHTML = `
                         <div class="img-container">
                             <img src="${imageUrl}" alt="${product.nombre}">
@@ -54,6 +60,9 @@
                             <div class="precio-row">
                                 <p class="precio">$${parseFloat(product.precio).toFixed(2)} MXN</p>
                                 <button class="btn-add" data-id="${product.idproducto}"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            <div class="admin-actions">
+                                ${adminButtons}
                             </div>
                         </div>
                     `;
@@ -97,12 +106,24 @@
                 });
             });
 
-            // --- AÑADIR AL CARRITO (DELEGACIÓN DE EVENTOS) ---
+            // --- DELEGACIÓN DE EVENTOS (AÑADIR Y ELIMINAR) ---
             productGrid.addEventListener('click', function(event) {
-                const addButton = event.target.closest('.btn-add');
+                const target = event.target;
+
+                // Botón de añadir al carrito
+                const addButton = target.closest('.btn-add');
                 if (addButton) {
                     const productId = addButton.dataset.id;
                     addToCart(productId);
+                    return; // Detener para no procesar otros clics
+                }
+
+                // Botón de eliminar producto (Admin)
+                const deleteButton = target.closest('.btn-delete');
+                if (deleteButton) {
+                    const productId = deleteButton.dataset.id;
+                    deleteProduct(productId);
+                    return;
                 }
             });
 
@@ -115,20 +136,55 @@
                 .then(response => {
                     if (response.status === 403) { // No autenticado
                         window.location.href = 'login.php';
-                        return;
+                        return Promise.reject('Not authenticated');
                     }
                     return response.json();
                 })
                 .then(data => {
                     if (data && data.status === 'success') {
-                        alert(data.message); // O una notificación más elegante
+                        alert(data.message);
                     } else if (data) {
                         alert('Error: ' + data.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Error al añadir al carrito:', error);
-                    alert('No se pudo añadir el producto. Intente de nuevo.');
+                    if (error !== 'Not authenticated') {
+                        console.error('Error al añadir al carrito:', error);
+                        alert('No se pudo añadir el producto. Intente de nuevo.');
+                    }
+                });
+            }
+
+            function deleteProduct(productId) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.')) {
+                    return;
+                }
+
+                fetch('api/product.php?action=delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idproducto: productId })
+                })
+                .then(response => {
+                    if (response.status === 403) {
+                         alert('No tienes permiso para realizar esta acción.');
+                         return Promise.reject('Permission denied');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.status === 'success') {
+                        alert(data.message);
+                        fetchProducts(); // Recargar la lista de productos
+                    } else if (data) {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    if (error !== 'Permission denied') {
+                        console.error('Error al eliminar el producto:', error);
+                        alert('No se pudo eliminar el producto. Intente de nuevo.');
+                    }
                 });
             }
 
