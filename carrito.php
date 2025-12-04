@@ -1,34 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito - Atasko</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="body-carrito">
-    
-    <header class="encabezado">
-        <div class="contenedor contenido-header">
-            <div class="logo">
-                <h1>Atasko<span class="punto">.</span></h1>
-            </div>
-            <nav class="navegacion">
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="productos.html">Productos</a></li>
-                    <li><a href="acerca.html">Acerca de</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </nav>
-            <div class="iconos-nav">
-                <a href="login.html" class="btn-icono"><i class="fa-solid fa-user"></i></a>
-                <a href="carrito.html" class="btn-icono activo"><i class="fa-solid fa-cart-shopping"></i></a>
-            </div>
-        </div>
-    </header>
+<?php require 'includes/header.php'; ?>
 
     <section class="hero hero-interno">
         <div class="hero-overlay"></div>
@@ -80,9 +50,7 @@
         </div>
     </section>
 
-    <footer class="pie-pagina">
-        <!-- ... Contenido del footer ... -->
-    </footer>
+    <?php require 'includes/footer.php'; ?>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -100,7 +68,7 @@
                 cartContainer.innerHTML = `
                     <div class="carrito-vacio">
                         <p>Tu carrito está vacío.</p>
-                        <a href="productos.html" class="btn-explorar">Explorar Productos</a>
+                        <a href="productos.php" class="btn-explorar">Explorar Productos</a>
                     </div>`;
                 updateTotals(0);
                 return;
@@ -129,7 +97,7 @@
                 cartContainer.appendChild(itemRow);
             });
             
-            cartContainer.innerHTML += `<a href="productos.html" class="seguir-comprando"><i class="fa-solid fa-arrow-left"></i> Seguir Comprando</a>`;
+            cartContainer.innerHTML += `<a href="productos.php" class="seguir-comprando"><i class="fa-solid fa-arrow-left"></i> Seguir Comprando</a>`;
             updateTotals(subtotal);
         }
 
@@ -142,7 +110,7 @@
         function fetchCart() {
             fetch('api/cart.php?action=get')
                 .then(response => {
-                    if (response.status === 403) { window.location.href = 'login.html'; return; }
+                    if (response.status === 403) { window.location.href = 'login.php'; return; }
                     return response.json();
                 })
                 .then(data => {

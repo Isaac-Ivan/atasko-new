@@ -1,34 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - Atasko</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="body-login">
-    
-    <header class="encabezado">
-        <div class="contenedor contenido-header">
-            <div class="logo">
-                <h1>Atasko<span class="punto">.</span></h1>
-            </div>
-            <nav class="navegacion">
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="productos.html">Productos</a></li>
-                    <li><a href="acerca.html">Acerca de</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </nav>
-            <div class="iconos-nav">
-                <a href="login.html" class="btn-icono activo"><i class="fa-solid fa-user"></i></a>
-                <a href="carrito.html" class="btn-icono"><i class="fa-solid fa-cart-shopping"></i></a>
-            </div>
-        </div>
-    </header>
+<?php require 'includes/header.php'; ?>
 
     <div class="login-wrapper">
         <div class="caja-login">
@@ -121,7 +91,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    window.location.href = 'index.html';
+                    window.location.href = 'index.php';
                 } else {
                     loginErrorDiv.textContent = data.message;
                     loginErrorDiv.style.display = 'block';

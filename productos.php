@@ -1,33 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - Atasko</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <header class="encabezado">
-        <div class="contenedor contenido-header">
-            <div class="logo">
-                <h1>Atasko<span class="punto">.</span></h1>
-            </div>
-            <nav class="navegacion">
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="productos.html" class="activo">Productos</a></li>
-                    <li><a href="acerca.html">Acerca de</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </nav>
-            <div class="iconos-nav">
-                <a href="login.html" class="btn-icono"><i class="fa-solid fa-user"></i></a>
-                <a href="carrito.html" class="btn-icono"><i class="fa-solid fa-cart-shopping"></i></a>
-            </div>
-        </div>
-    </header>
+<?php require 'includes/header.php'; ?>
 
     <section class="hero hero-interno">
         <div class="hero-overlay"></div>
@@ -54,34 +25,7 @@
         </div>
     </section>
 
-    <footer class="pie-pagina">
-        <div class="contenedor">
-            <div class="info-footer">
-                <div class="columna-footer">
-                    <h4>Atasko<span class="punto">.</span></h4>
-                    <p>Amor y cuidado para quienes siempre te esperan en casa.</p>
-                </div>
-                <div class="columna-footer">
-                    <h4>Explorar</h4>
-                    <ul>
-                        <li><a href="index.html">Inicio</a></li>
-                        <li><a href="productos.html">Catálogo</a></li>
-                        <li><a href="contacto.html">Contacto</a></li>
-                    </ul>
-                </div>
-                <div class="columna-footer">
-                    <h4>Ayuda</h4>
-                    <p><i class="fa-solid fa-envelope"></i> info@atasko.com</p>
-                    <p><i class="fa-solid fa-phone"></i> +52 555 123 4567</p>
-                </div>
-            </div>
-            <div class="derechos">
-                <p>&copy; 2025 Atasko. Creado con fines educativos.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
+        <script>
         document.addEventListener('DOMContentLoaded', () => {
             const productGrid = document.getElementById('product-grid');
             const filterButtons = document.querySelectorAll('.btn-filtro');
@@ -170,7 +114,7 @@
                 })
                 .then(response => {
                     if (response.status === 403) { // No autenticado
-                        window.location.href = 'login.html';
+                        window.location.href = 'login.php';
                         return;
                     }
                     return response.json();
@@ -192,5 +136,4 @@
             fetchProducts();
         });
     </script>
-</body>
-</html>
+    <?php require 'includes/footer.php'; ?>

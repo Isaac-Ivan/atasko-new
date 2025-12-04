@@ -90,8 +90,8 @@ function handleRemove($conn, $idusuario) {
 
     $idproducto = (int)$data->idproducto;
 
-    $stmt = $conn->prepare("DELETE dc FROM detalle_carrito dc JOIN carrito c ON dc.idcarrito = c.idcarrito WHERE c.idusuario = ? AND dc.idproducto = ? AND c.estado = 1");
-    $stmt->bind_param("ii", $idusuario, $idproducto);
+    $stmt = $conn->prepare("DELETE FROM detalle_carrito WHERE idproducto = ? AND idcarrito = (SELECT idcarrito FROM carrito WHERE idusuario = ? AND estado = 1)");
+    $stmt->bind_param("ii", $idproducto, $idusuario);
 
     if ($stmt->execute()) {
         $response = ['status' => 'success', 'message' => 'Producto eliminado del carrito.'];
@@ -162,7 +162,8 @@ function handleAdd($conn, $idusuario) {
         if ($row = $result_cart->fetch_assoc()) {
             $idcarrito = $row['idcarrito'];
         } else {
-            $stmt_create_cart = $conn->prepare("INSERT INTO carrito (idusuario) VALUES (?)");
+            // Si no hay carrito, creamos uno nuevo con estado 1
+            $stmt_create_cart = $conn->prepare("INSERT INTO carrito (idusuario, estado) VALUES (?, 1)");
             $stmt_create_cart->bind_param("i", $idusuario);
             $stmt_create_cart->execute();
             $idcarrito = $conn->insert_id;
