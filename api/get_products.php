@@ -11,7 +11,7 @@ $response = array(
 );
 
 // Consulta para obtener todos los productos
-$sql = "SELECT idproducto, nombre, descripcion, precio, stock, imagen FROM producto";
+$sql = "SELECT idproducto, nombre, descripcion, precio, stock, imagen, idcategoria FROM producto";
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {

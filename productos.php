@@ -13,14 +13,19 @@
             
             <div class="filtros-container">
                 <button class="btn-filtro activo" data-filter="todos">Todos</button>
-                <button class="btn-filtro" data-filter="perros">Perros</button>
-                <button class="btn-filtro" data-filter="gatos">Gatos</button>
-                <button class="btn-filtro" data-filter="accesorios">Accesorios</button>
-                <button class="btn-filtro" data-filter="salud">Salud</button>
+                <button class="btn-filtro" data-filter="1">Perros</button>
+                <button class="btn-filtro" data-filter="2">Gatos</button>
+                <button class="btn-filtro" data-filter="3">Accesorios</button>
+                <button class="btn-filtro" data-filter="4">Salud</button>
+            </div>
+
+            <div id="CountProducts">
+
             </div>
 
             <div class="grid-productos" id="product-grid">
-                <!-- Los productos se cargarán aquí dinámicamente -->
+                
+                <!-- Imprime lista de productos-->
             </div>
         </div>
     </section>
@@ -30,16 +35,19 @@
             const productGrid = document.getElementById('product-grid');
             const filterButtons = document.querySelectorAll('.btn-filtro');
             let allProducts = [];
+            let contadorProductos = 0;
 
             // --- FUNCIÓN PARA RENDERIZAR PRODUCTOS ---
             function renderProducts(products) {
-                productGrid.innerHTML = ''; // Limpiar el grid
+                contadorProductos = 0;
+                productGrid.innerHTML = ''; 
                 if (products.length === 0) {
                     productGrid.innerHTML = '<p>No se encontraron productos.</p>';
                     return;
                 }
                 products.forEach(product => {
-                    const category = product.idcategoria === 1 ? 'juguetes' : 'alimento';
+                    contadorProductos++;
+                    const category = product.idcategoria ;
                     const imageUrl = product.imagen ? `data:image/jpeg;base64,${product.imagen}` : `https://placehold.co/300x300/e8f5e9/2e7d32?text=${encodeURIComponent(product.nombre)}`;
                     const productItem = document.createElement('div');
                     productItem.className = 'producto-item';
@@ -68,6 +76,9 @@
                     `;
                     productGrid.appendChild(productItem);
                 });
+
+                document.getElementById('CountProducts').innerHTML = `<h4 class="info-producto">Productos encontrados: ${contadorProductos}</h4>`;
+                 console.log(contadorProductos)
             }
 
             // --- FUNCIÓN PARA OBTENER PRODUCTOS (API) ---
@@ -97,10 +108,7 @@
                     if (filter === 'todos') {
                         renderProducts(allProducts);
                     } else {
-                        const filteredProducts = allProducts.filter(p => {
-                           const category = p.idcategoria === 1 ? 'juguetes' : 'alimento';
-                           return category === filter;
-                        });
+                        const filteredProducts = allProducts.filter(p => p.idcategoria == filter);
                         renderProducts(filteredProducts);
                     }
                 });
